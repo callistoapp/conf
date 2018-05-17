@@ -1,0 +1,151 @@
+version: '3.0'
+
+volumes:
+  node_modules_auth:
+  node_modules_front:
+  node_modules_acls:
+
+services:
+  traefik:
+    image: traefik
+    command: --web --docker --logLevel=debug
+    ports:
+      - 80:80
+      - 8080:8080
+      - 443:443
+    networks:
+      - callisto-network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config/traefik/:/etc/traefik/:rw
+
+  acls:
+    environment:
+      - MONGO_ROOT_PASSWORD=password
+    build: ./callisto-acls
+    networks:
+      - callisto-network
+    volumes:
+      - node_modules_acls:/opt/app/node_modules/:rw
+      - ./callisto-acls:/opt/app/:rw
+    labels:
+      - traefik.backend=roles
+      - traefik.frontend.rule=Host:roles.callisto.com
+    depends_on:
+      - mongo
+    command:
+      sh -c '
+        cp -a /tmp/node_modules /opt/app &&
+        npm run start'
+
+  auth:
+    environment:
+      - REDIS_STORE_HOST=redis
+      - REDIS_STORE_SECRET=password
+      - PORT=3001
+      - MYSQL_ROOT_PASSWORD=password
+      - JWT_SECRET=MyS3cR37KEY
+      - GITHUB_CLIENT_ID=5f297cc6ebe92a6d29b5
+      - GOOGLE_CLIENT_ID=425377971208-lv0phruapvm1kr9aogg4pi1d3bjci236.apps.googleusercontent.com
+      - GITHUB_CLIENT_SECRET=b49511fc0e5f6eee1115bb5436148b3039d8c20f
+      - GOOGLE_CLIENT_SECRET=oLajxb4RU8sH6vTql9RLarok
+
+    build: ./callisto-auth
+    networks:
+      - callisto-network
+    volumes:
+      - node_modules_auth:/opt/app/node_modules/:rw
+      - ./callisto-auth:/opt/app/:rw
+    labels:
+      - traefik.backend=auth
+      - traefik.frontend.rule=Host:auth.callisto.com
+    depends_on:
+      - mysql
+      - redis
+    command:
+      sh -c '
+        cp -a /tmp/node_modules /opt/app &&
+        npm run start'
+
+  back:
+    build: ./callisto-back
+    networks:
+      - callisto-network
+    labels:
+      - traefik.backend=back
+      - traefik.frontend.rule=Host:api.callisto.com
+    volumes:
+      - ./callisto-back:/go/src/callisto:rw
+    depends_on:
+      - postgres
+
+  front:
+    build: ./callisto-front
+    networks:
+      - callisto-network
+    labels:
+      - traefik.backend=front
+      - traefik.frontend.rule=Host:app.callisto.com
+    volumes:
+      - ./callisto-front:/opt/app:rw
+      - node_modules_front:/opt/app/node_modules/:rw
+    command:
+      sh -c '
+        cp -a /tmp/node_modules /opt/app &&
+        npm start'
+
+  wordpress:
+    image: wordpress
+    environment:
+      - WORDPRESS_DB_NAME=wordpress
+      - WORDPRESS_TABLE_PREFIX=wpprefix_
+      - WORDPRESS_DB_HOST=mysql
+      - WORDPRESS_DB_PASSWORD=password
+    networks:
+      - callisto-network
+    labels:
+      - traefik.backend=wordpress
+      - traefik.frontend.rule=Host:www.callisto.com
+
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    networks:
+      - callisto-network
+    environment:
+      - POSTGRES_PASSWORD=postgrespassword
+      - POSTGRES_USER=callisto
+    volumes:
+      - ./config/db/postgres:/docker-entrypoint-initdb.d:rw
+
+  redis:
+    networks:
+      - callisto-network
+    image: redis:alpine
+    ports:
+      - 6379:6379
+
+  mysql:
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=auth
+    volumes:
+      - ./config/db/mysql:/docker-entrypoint-initdb.d:rw
+    networks:
+      - callisto-network
+    image: mysql
+    ports:
+      - 3306:3306
+
+  mongo:
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+    image: mongo
+    networks:
+      - callisto-network
+
+networks:
+  callisto-network:
+    driver: bridge

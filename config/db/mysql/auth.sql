@@ -8,6 +8,9 @@ CREATE TABLE users (
   githubId INTEGER UNIQUE,
   googleId VARCHAR(255) UNIQUE,
   avatar VARCHAR(255),
+  firstname VARCHAR(255),
+  lastname VARCHAR(255),
+  fullname VARCHAR(255),
   verified_email TINYINT(1),
   PRIMARY KEY (id)
 );

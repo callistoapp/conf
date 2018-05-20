@@ -7,6 +7,7 @@ CREATE TABLE users (
   email VARCHAR(255) UNIQUE,
   githubId INTEGER UNIQUE,
   googleId VARCHAR(255) UNIQUE,
+  avatar VARCHAR(255),
   verified_email TINYINT(1),
   PRIMARY KEY (id)
 );

@@ -1,9 +1,9 @@
-callisto-auth/
-callisto-acls/
-callisto-back/
-callisto-front/
-callisto-grpc-stubs/
-callisto/
+/callisto-auth/
+/callisto-acls/
+/callisto-back/
+/callisto-front/
+/callisto-grpc-stubs/
+/callisto/
 .idea/
 .DS_Store
 .realize.yaml

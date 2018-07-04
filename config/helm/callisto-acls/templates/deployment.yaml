@@ -26,9 +26,28 @@ spec:
           command: ["node"]
           args: ["dist/index.js"]
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: "REDIS_STORE_HOST"
+              value: "redis"
+            - name: "REDIS_STORE_SECRET"
+              value: "password"
+            - name: "PORT"
+              value: "3001"
+            - name: "MYSQL_ROOT_PASSWORD"
+              value: "password"
+            - name: "JWT_SECRET"
+              value: "MyS3cR37KEY"
+            - name: "GITHUB_CLIENT_ID"
+              value: "5f297cc6ebe92a6d29b5"
+            - name: "GOOGLE_CLIENT_ID"
+              value: "425377971208-lv0phruapvm1kr9aogg4pi1d3bjci236.apps.googleusercontent.com"
+            - name: "GITHUB_CLIENT_SECRET"
+              value: "b49511fc0e5f6eee1115bb5436148b3039d8c20f"
+            - name: "GOOGLE_CLIENT_SECRET"
+              value: "oLajxb4RU8sH6vTql9RLarok"
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 3001
               protocol: TCP
           livenessProbe:
             httpGet:

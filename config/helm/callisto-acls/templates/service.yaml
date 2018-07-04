@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "callisto-acls.fullname" . }}
+  namespace: callisto
   labels:
     app: {{ template "callisto-acls.name" . }}
     chart: {{ template "callisto-acls.chart" . }}

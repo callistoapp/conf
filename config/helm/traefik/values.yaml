@@ -1,0 +1,8 @@
+dashboard:
+  enabled: true
+kubernetes:
+  namespaces: 
+    - callisto
+metrics:
+  prometheus:
+    enabled: true

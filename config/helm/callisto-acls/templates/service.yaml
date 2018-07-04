@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "callisto-acls.fullname" . }}
+  labels:
+    app: {{ template "callisto-acls.name" . }}
+    chart: {{ template "callisto-acls.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "callisto-acls.name" . }}
+    release: {{ .Release.Name }}

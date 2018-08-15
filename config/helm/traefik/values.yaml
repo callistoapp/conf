@@ -1,8 +1,9 @@
 dashboard:
   enabled: true
+  domain: traefik-ui.callisto.local
+
 kubernetes:
-  namespaces: 
+  namespaces:
     - callisto
-metrics:
-  prometheus:
-    enabled: true
+    - kube-system
+

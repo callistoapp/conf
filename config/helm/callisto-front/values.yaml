@@ -15,12 +15,12 @@ service:
 
 ingress:
   enabled: false
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
+  annotations: 
+    kubernetes.io/ingress.class: traefik
     # kubernetes.io/tls-acme: "true"
   path: /
   hosts:
-    - chart-example.local
+    - www.callisto.local
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:

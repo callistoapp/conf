@@ -37,20 +37,15 @@ clean_postgres:
 clean_mysql:
 	helm del --purge mysql || echo "mysql cleaned"
 
-restart_auth:
-	clean_auth install_auth
+restart_auth:	clean_auth install_auth
 
-restart_acls:
-	clean_acls install_acls
+restart_acls:	clean_acls install_acls
 
-restart_back:
-	clean_back install_back
+restart_back:	clean_back install_back
 
-restart_postgres:
-	clean_postgres install_postgres
+restart_postgres:	clean_postgres install_postgres
 
-restart_traefik:
-	clean_traefik install_traefik
+restart_traefik: clean_traefik install_traefik
 
 clean: clean_auth clean_back clean_acls clean_traefik clean_postgres clean_mysql
 

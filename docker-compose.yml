@@ -17,7 +17,7 @@ services:
       - callisto-network
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./config/traefik/:/etc/traefik/:rw
+      - ./docker/traefik/:/etc/traefik/:rw
 
   acls:
     environment:
@@ -117,7 +117,7 @@ services:
       - POSTGRES_PASSWORD=postgrespassword
       - POSTGRES_USER=callisto
     volumes:
-      - ./config/db/postgres:/docker-entrypoint-initdb.d:rw
+      - ./docker/db/postgres:/docker-entrypoint-initdb.d:rw
 
   redis:
     networks:
@@ -131,7 +131,7 @@ services:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=auth
     volumes:
-      - ./config/db/mysql:/docker-entrypoint-initdb.d:rw
+      - ./docker/db/mysql:/docker-entrypoint-initdb.d:rw
     networks:
       - callisto-network
     image: mysql
